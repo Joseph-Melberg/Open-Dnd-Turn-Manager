@@ -1,19 +1,16 @@
 import Room from "./views/Room.js";
 import Entrance from "./views/Entrance.js";
+import Temporary from "./views/Temporary.js";
 const enterQueueButton = document.getElementById("enterQueue");
 const exitQueueButton = document.getElementById("exitQueue");
-const exitRoom = document.getElementById("exitRoom");
-const roomForm = document.getElementById("roomForm");
+const nameForm = document.getElementById("nameForm");
+const tableSpot = document.getElementById("tableSpot");
 const socket = io();
-//I am very interested in seeing if event listeners pile up. This can be tested by having the scripts that create them be 
-//run twice (going forth and then back).  
-
-//assuming they do stick around, we could create them and put them into a list and then iterate through the list
-//after navigate
 
 const routes = [
     { path: "/", view: Entrance},
-    { path: "/join", view: Room}
+    { path: "/join", view: Room},
+    { path: "/temp", view: Temporary}
 ]
 
 const navigateTo = url => {
@@ -41,47 +38,65 @@ const router = async () => {
 
     const view = new match.route.view();
     document.querySelector("#app").innerHTML = await view.getHtml();
+    view.connectDOM();
     console.log(match.route.path);
 
 }
 
 enterQueueButton.addEventListener('click' , e => {
     console.log("Send Button Pressed");
-    socket.emit("hello");
-    socket.emit("message","howdy");
+    socket.emit("enqueue");
 });
 
 exitQueueButton.addEventListener('click', e => {
-    console.log("Joining");
-    socket.emit("join","test");
+    console.log("exiting");
+    socket.emit("exit");
 });
 
-exitRoom.addEventListener('click',e => {
-    console.log("Connect button pressed");
-});
 
-roomForm.addEventListener("submit", e => {
+nameForm.addEventListener("submit", e => {
     e.preventDefault();
 
-    let roomId = e.target.elements.roomInput.value;
+    let playerName = e.target.elements.nameInput.value;
 
-    console.log(`Attempting to join room ${roomId}`);
+    console.log(`Attempting to set name ${playerName}`);
 
-    socket.emit('join',roomId);
+    socket.emit('join',playerName);
 })
+
+// newRoomButton.addEventListener('click', e => {
+//     console.log("making a new room");
+//     socket.emit("create");
+// })
 
 
 socket.on("state", state => {
     console.log("Received state");
+    state.queue.forEach(element => {
+       console.log(element); 
+    });
+    const tableHead = "<table><thead><tr><th>name</th></tr></thead>"
+    var table = tableHead + "<tbody>"
+    console.log(table);
+    state.queue.forEach( _ => 
+        {
+            table = table + "<tr><td>" + _ + "</td>" + "</tr>";
+            
+    console.log(table);
+        }) 
+    table = table + "</tbody></table>"
+    console.log(table);
+
+    tableSpot.innerHTML = table
 })
 
 socket.on("message", message => {
     console.log(message);
 })
 
-
+/*
 window.addEventListener("popstate", router);
-
+/*
 
 document.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener("click", e => {
@@ -92,3 +107,4 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     router();
 })
+*/

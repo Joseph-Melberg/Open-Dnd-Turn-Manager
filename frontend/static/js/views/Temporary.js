@@ -3,14 +3,28 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Entrance");
+        this.setTitle("Queue");
     }
 
     async getHtml() {
         return `
-        <p>Entrance<\p> 
+        <p>Hello<\p> 
+        
+    <div>
+        <form id="nameForm">
+            <input
+                id="nameInput"
+                type="text"
+                placeholder="Enter your name"
+                required
+                autocomplete="off"
+            />
+            <button id= test class="btn">Join</button>
+        </form>
+    </div>
         `;
     }
+    
     disconnectDOM() {
         document.getElementById("test").remove();
     }

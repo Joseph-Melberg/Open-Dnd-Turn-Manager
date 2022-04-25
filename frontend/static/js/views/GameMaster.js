@@ -8,7 +8,7 @@ export default class extends AbstractView {
 
     async getHtml() {
         return `
-        <p>Entrance<\p> 
+        <p>Entrence<\p> 
         `;
     }
     disconnectDOM() {
@@ -19,5 +19,6 @@ export default class extends AbstractView {
         document.getElementById("test").addEventListener('click',e => {
             console.log("J");
         })
+
     }
 }

@@ -7,17 +7,19 @@
     <title>Document</title>
 </head>
 <body>
+    <!--
     <nav class="nav">
         <a href="/" class="nav__link" data-link>Enter</a>
         <a href="/join" class="nav__link" data-link>Join</a>
+        <a href="/temp" class="nav__link" data-link>GO HERE</a>
     </nav>
-
+    --->
     <div>
-        <form id="roomForm">
+        <form id="nameForm">
             <input
-                id="roomInput"
+                id="nameInput"
                 type="text"
-                placeholder="Enter room name"
+                placeholder="Enter name"
                 required
                 autocomplete="off"
             />
@@ -27,9 +29,8 @@
     <div>
         <button id="enterQueue">Enter Queue</button>
         <button id="exitQueue">Exit Queue</button>
-        <button id="exitRoom">Exit Room</button>
     </div>
-
+    <div id="tableSpot"></div>
     <div id="app"></div>
 
     <script src= "/socket.io/socket.io.js"></script>
