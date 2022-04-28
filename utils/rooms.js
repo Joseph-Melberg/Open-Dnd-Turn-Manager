@@ -8,14 +8,10 @@ class Room {
     }
 }
 
-function enqueue(name, room){
-    const index = room.queue.indexOf(name);
-    console.log(`enqueuing ${name}`);
-    if(index > -1)
-    {
-        room.queue.splice(index,1); 
-    }
-    room.queue.push(name);
+function enqueue(userid, room){
+    console.log(`enqueuing ${userid}`);
+    room.queue = room.queue.filter( _ => _ != userid);
+    room.queue.push(userid);
 }
 function dequeue(room) {
     if(room.queue.length == 0)
@@ -25,16 +21,18 @@ function dequeue(room) {
     return room.queue.shift();
 }
 
+function leaveQueue(userid,room){
+    console.log(`current length ${room.queue.length}`)
+    room.queue = room.queue.filter( _ => _ != userid);
+    console.log(`current length ${room.queue.length}`)
+}
+
 function describeRoom(room)
 {
     console.log("-------");
     console.log(`- id = ${room.id}`);
     console.log("-------")
     console.log(room.queue);
-    for (let index = 0; index < room.queue.length; index++) {
-        console.log(room.queue[index]);
-        
-    }
 }
 function addRoom() {
 
@@ -62,5 +60,6 @@ module.exports = {
     dequeue,
     describeRoom,
     getRoom,
+    leaveQueue
     
 }

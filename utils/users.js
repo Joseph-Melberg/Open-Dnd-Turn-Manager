@@ -25,6 +25,15 @@ function userJoin(id, username, roomId) {
     return user;
 }
 
+function renameUser(id,newName) {
+    const index = users.findIndex(user => user.id == id);
+    if(index != -1)
+    {
+        console.log(`We found ${id}`);
+        users[index].username = newName;
+    }
+}
+
 
 function getCurrentUser(id) {
     return users.find(user => user.id == id)
@@ -33,7 +42,9 @@ function getCurrentUser(id) {
 function userLeaves(id) {
     const index = users.findIndex(user => user.id == id);
 
-    if(index !== -1) {
+    if(index != -1) {
+        console.log(`user ${id} removed`)
+
         return users.splice(index, 1);
     }
 }
@@ -48,5 +59,6 @@ module.exports = {
     getCurrentUser,
     userLeaves,
     getRoomUsers,
+    renameUser,
     User
 }

@@ -1,6 +1,6 @@
 const { Console } = require("console");
-const {addRoom, getRoom,enqueue,dequeue, describeRoom} = require('./utils/rooms');
-const {userJoin, getCurrentUser, userLeaves,getRoomUsers} = require('./utils/users');
+const {addRoom, getRoom,enqueue,dequeue, leaveQueue, describeRoom} = require('./utils/rooms');
+const {renameUser,userJoin, getCurrentUser, userLeaves,getRoomUsers} = require('./utils/users');
 const express = require("express");
 const http = require('http');
 const path = require("path");
@@ -68,6 +68,12 @@ io.on('connection', socket => {
             console.error(`Looks like someone is already ${playerName}`);
             return;
         }
+        if(getRoomUsers(room.id).map(_ => _.id).includes(socket.id))
+        {
+            renameUser(socket.id,playerName);
+            sendStateUpdate(io,room);
+            return;
+        }
         
         console.log(`This room has an id of ${room.id}`)
         socket.join(room.id);
@@ -107,14 +113,45 @@ io.on('connection', socket => {
     })
     socket.on("disconnect", () => 
     {
-        console.log("A");
+        console.log("disconnect");
+
+
+        const user = getCurrentUser(socket.id);
+
+        if(user == null)
+        {
+            return;
+        }
+
+        userLeaves(socket.id);
+
+        const room = getRoom(user.roomId);
+
+        if(room == null)
+        {
+            return;
+        }
+        leaveQueue(user.id,room);        
+        sendStateUpdate(io,room);
     })
     socket.on("enqueue", () => {
         console.log("Enqueue");
 
         const user = getCurrentUser(socket.id);
 
+        if(user == null)
+        {
+            console.log("invalid user");
+            return;
+        }
+
         const room = getRoom(user.roomId);
+
+        if(room == null)
+        {
+            console.log("invalid room");
+            return;
+        }
 
         enqueue(user.id,room);
         describeRoom(room);
@@ -128,6 +165,7 @@ io.on('connection', socket => {
 function buildState(room) {
     queue = [];
     console.log(room.queue.length);
+    console.log(room.queue);
     for (let index = 0; index < room.queue.length; index++) {
 
         given_user = (getCurrentUser(room.queue[index]).username);
