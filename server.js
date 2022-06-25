@@ -7,6 +7,13 @@ const path = require("path");
 const socketio = require('socket.io');
 const { createGunzip } = require("zlib");
 const app = express();
+
+process.title = "Open-Dnd-Queue"
+if (process.pid) {
+    console.log('This process is your pid ' + process.pid);
+  }
+process.on('SIGINT', closeGracefully)
+process.on("SIGTERM", closeGracefully)
 app.use("/static", express.static(path.resolve(__dirname,"frontend","static")))
 
 app.get("/*", (req, res) =>{
@@ -18,6 +25,13 @@ app.get("/*", (req, res) =>{
 const server = http.createServer(app);
 const io = socketio(server);
 
+async function closeGracefully(signal) {
+    await server.close();
+    console.log("I tried to quit")
+    
+    
+    
+    }
 io.on('connection', socket => {
     console.log('new socket connection');
 
@@ -48,8 +62,13 @@ io.on('connection', socket => {
             console.log("I am dm");
             console.log(`I would like to certify that ${user.username} is the exact same string as ${"dm"}, always ${user.username === "dm"}`)
             dequeue(room);
-            sendStateUpdate(io, room);
         }
+        else
+        {
+            console.log('${user.username} would like to leave');
+            leaveQueue(user.id,room);
+        }
+        sendStateUpdate(io, room);
     });
 
     socket.on("join", playerName => {
@@ -83,12 +102,67 @@ io.on('connection', socket => {
         console.log(`Creating a user ${socket.id}, ${playerName}, ${room.id}`)
         userJoin(socket.id,playerName,room.id);
         people = getRoomUsers(room.id);
-        people.forEach(element => {
-           console.log(element.usernam) 
-        });
 
         sendStateUpdate(io, room);
     });
+
+    socket.on("initiative", value => {
+
+        const user = getCurrentUser(socket.id);
+        if(user == null)
+        {
+            console.log("Invalid user");
+            return;
+        }
+        const room = getRoom(user.roomId);
+        if(room == null)
+        {
+            console.log("Invalid room");
+
+            return;
+        }
+        user.initiative = value;
+        console.log(`${user.username} has initiative ${value}`);
+        sendStateUpdate(io, room);
+        
+    })
+
+    socket.on("exitcombat", () => {
+
+        const user = getCurrentUser(socket.id);
+        if(user == null)
+        {
+            console.log("Invalid user");
+            return;
+        }
+        const room = getRoom(user.roomId);
+        if(room == null)
+        {
+            console.log("Invalid room");
+
+            return;
+        }
+        
+        if(user.username === "dm")
+        {
+
+            people = getRoomUsers(room.id);
+            (people).forEach(element => {
+                element.initiative = null
+            });
+
+            (people).forEach(element => {
+                console.log(element.initiative)
+            })
+        }
+        else
+        {
+            user.initiative = null;
+        }
+
+        sendStateUpdate(io, room);
+    })
+
 /*
     socket.on("leave", () => {
         socket.join("nullroom");
@@ -172,10 +246,29 @@ function buildState(room) {
         console.log(given_user);
         queue.push(given_user);
     }
+
+    people = getRoomUsers(room.id);
+    console.log(`There are ${people.length} people in the room`);
+    initiative = people
+        .filter( person => person.initiative != null )
+        .map( person => ({initiative: person.initiative, name: person.username}))
+        .sort((p1, p2) => p2.initiative - p1.initiative)
+
+    people.forEach(element => {
+        console.log(element.initiative);
+    })
+    initiative.forEach(element => {
+        console.log(element.initiative);
+    })
+
+    console.log(initiative);
+
     const state = 
     {
-        queue: queue
+        queue: queue,
+        initiative: initiative
     }
+    console.log(state);
     return state;
 }
 function sendStateUpdate(io, room ){ 

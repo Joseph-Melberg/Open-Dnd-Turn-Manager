@@ -4,7 +4,12 @@ import Temporary from "./views/Temporary.js";
 const enterQueueButton = document.getElementById("enterQueue");
 const exitQueueButton = document.getElementById("exitQueue");
 const nameForm = document.getElementById("nameForm");
+const intiativeForm = document.getElementById("initiativeForm");
+const intiativeButton = document.getElementById("initiativeButton");
+const exitCombat = document.getElementById("initiativeClearButton");
+
 const tableSpot = document.getElementById("tableSpot");
+const combatTableSpot = document.getElementById("combatTableSpot");
 const socket = io();
 
 const routes = [
@@ -42,6 +47,10 @@ const router = async () => {
     console.log(match.route.path);
 
 }
+exitCombat.addEventListener('click', e => {
+    console.log("Sent exit combat");
+    socket.emit('exitcombat');
+})
 
 enterQueueButton.addEventListener('click' , e => {
     console.log("Send Button Pressed");
@@ -54,6 +63,7 @@ exitQueueButton.addEventListener('click', e => {
 });
 
 
+
 nameForm.addEventListener("submit", e => {
     e.preventDefault();
 
@@ -62,6 +72,16 @@ nameForm.addEventListener("submit", e => {
     console.log(`Attempting to set name ${playerName}`);
 
     socket.emit('join',playerName);
+})
+
+intiativeForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    let initiative = e.target.elements.initiativeInput.value;
+
+    console.log(`The initiative was ${initiative}`);
+
+    socket.emit('initiative',initiative);
 })
 
 // newRoomButton.addEventListener('click', e => {
@@ -77,18 +97,30 @@ socket.on("state", state => {
     });
     const tableHead = "<table><thead><tr><th>name</th></tr></thead>"
     var table = tableHead + "<tbody>"
-    console.log(table);
     state.queue.forEach( _ => 
         {
             table = table + "<tr><td>" + _ + "</td>" + "</tr>";
             
-    console.log(table);
         }) 
     table = table + "</tbody></table>"
-    console.log(table);
 
     tableSpot.innerHTML = table
+    state.initiative.forEach(element => {
+        console.log(element);
+    });
+
+    const combatTableHead = "<table><thead><tr><th>name</th><th>initiative</th></tr></thead>";
+    var combatTable = combatTableHead + "<tbody>"
+    state.initiative.forEach(element => 
+    {
+        console.log(element.initiative);
+        combatTable = combatTable + "<tr><td>" + element.name + "</td>" + "<td>" + element.initiative + "</td>" + "</tr>";
+    }) 
+    combatTable = combatTable + "</tbody></table>";
+    combatTableSpot.innerHTML = combatTable;
 })
+
+
 
 socket.on("message", message => {
     console.log(message);

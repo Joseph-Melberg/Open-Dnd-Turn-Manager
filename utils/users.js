@@ -7,6 +7,7 @@ class User {
         this.id = id;
         this.username = username;
         this.roomId = roomId;
+        this.initiative = null;
     }
 }
 

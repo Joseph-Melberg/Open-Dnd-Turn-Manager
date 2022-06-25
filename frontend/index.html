@@ -12,28 +12,51 @@
         <a href="/" class="nav__link" data-link>Enter</a>
         <a href="/join" class="nav__link" data-link>Join</a>
         <a href="/temp" class="nav__link" data-link>GO HERE</a>
-    </nav>
+    </nav>ra
+
     --->
-    <div>
-        <form id="nameForm">
-            <input
-                id="nameInput"
-                type="text"
-                placeholder="Enter name"
-                required
-                autocomplete="off"
-            />
-            <button class="btn">Join</button>
-        </form>
-    </div>
-    <div>
-        <button id="enterQueue">Enter Queue</button>
-        <button id="exitQueue">Exit Queue</button>
+    <div class="wrapper" style="float: down">
+        <div id = "nameFormBox" style="float: left;">
+            <form id="nameForm">
+                <input
+                    id="nameInput"
+                    type="text"
+                    placeholder="Enter name"
+                    maxlength="50"
+                    minlength="1"
+                    required
+                    autocomplete="off"
+                />
+                <button class="btn">Join</button>
+            </form>
+        </div>
+        <div>
+            <button id="enterQueue">Enter Queue</button>
+            <button id="exitQueue">Exit Queue</button>
+        </div>
     </div>
     <div id="tableSpot"></div>
+    <div id="combat">
+        <div id="initiativeFormBox" >
+            <form id ="initiativeForm">
+                <input
+                    id="initiativeInput"
+                    placeholder="Initiative"
+                    type="number"
+                    required
+                    autocomplete="off"
+                    />
+                    <button class="initiativeButton">Enter</button>
+            </form>
+            <button id="initiativeClearButton" >Exit Combat</button>
+        </div>
+    </div>
+    <div id="combatTableSpot"> </div>
     <div id="app"></div>
 
     <script src= "/socket.io/socket.io.js"></script>
     <script type="module" src="/static/js/index.js"></script>
+
 </body>
+
 </html>

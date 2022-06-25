@@ -1,7 +1,7 @@
 {
   "name": "Open-Dnd-Turn-Manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "A DnD",
   "main": "index.js",
   "scripts": {
     "start": "node server",
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/Joseph-Melberg/Open-Dnd-Turn-Manager.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Joseph Melberg III",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Joseph-Melberg/Open-Dnd-Turn-Manager/issues"
@@ -22,6 +22,9 @@
     "crypto": "^1.0.1",
     "express": "^4.17.3",
     "socket.io": "^4.4.1"
+  },
+  "scripts": {
+    "start": "node server.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

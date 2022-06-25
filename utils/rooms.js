@@ -1,4 +1,3 @@
-const {randomUUID} = require('crypto');
 const rooms = [];
 class Room {
     constructor(id)
@@ -36,7 +35,6 @@ function describeRoom(room)
 }
 function addRoom() {
 
-    var id = randomUUID();
     //TEMPORARY FOR TESTING PURPOSES
     id = "an";
     const newRoom = new Room(id);
